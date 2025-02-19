@@ -1,5 +1,1 @@
-# Update submodules
-
-```bash
-git submodule update --init --recursive
-```
+# Le Coursier App Infra
