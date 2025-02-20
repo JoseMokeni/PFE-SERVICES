@@ -32,6 +32,43 @@ services:
       - "6379:6379"
     networks:
       - lecoursier
+  # traefik:
+  #   image: traefik
+  #   container_name: traefik
+  #   restart: always
+  #   command:
+  #     - --providers.docker=true
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.websecure.address=:443
+  #     - --certificatesresolvers.leresolver.acme.httpchallenge=true
+  #     - --certificatesresolvers.leresolver.acme.email=jmmokeni@gmail.com
+  #     - --certificatesresolvers.leresolver.acme.storage=./docker/traefik/acme.json
+  #     - --certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./docker/traefik/acme.json:/acme.json
+  #     - ./docker/traefik/traefik.toml:/etc/traefik/traefik.toml
+  #   networks:
+  #     - lecoursier
+  #   labels:
+  #     - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+  #     - "traefik.http.routers.http-catchall.entrypoints=web"
+  #     - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+  #     - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  # Mail service
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: always
+    ports:
+      - "8025:8025"
+    networks:
+      - lecoursier
+
 volumes:
   pgdata:
 
