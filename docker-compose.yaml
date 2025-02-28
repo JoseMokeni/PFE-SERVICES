@@ -18,8 +18,15 @@ services:
     networks:
       - default
       - lecoursier
+      - traefik-public
     depends_on:
       - postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.josemokeni.cloud`)"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.tls.certresolver=leresolver"
   redis:
     image: redis
     container_name: redis
@@ -47,6 +54,7 @@ services:
   #     - ./docker/traefik/traefik.toml:/etc/traefik/traefik.toml
   #   networks:
   #     - lecoursier
+  #     - traefik-public
   #   labels:
   #     - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
   #     - "traefik.http.routers.http-catchall.entrypoints=web"

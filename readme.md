@@ -6,6 +6,12 @@ Before running `docker-compose up -d` make sure to create the lecoursier network
 docker network create lecoursier
 ```
 
+After that, create the traefik-public network with the following command:
+
+```bash
+docker network create traefik-public
+```
+
 And then run the following command:
 
 ```bash
