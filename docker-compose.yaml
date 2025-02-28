@@ -11,14 +11,10 @@ services:
     networks:
       - default
       - lecoursier
-    ports:
-      - "5432:5432"
   adminer:
     image: adminer
     container_name: adminer
     restart: always
-    ports:
-      - "8080:8080"
     networks:
       - default
       - lecoursier
@@ -28,8 +24,6 @@ services:
     image: redis
     container_name: redis
     restart: always
-    ports:
-      - "6379:6379"
     networks:
       - lecoursier
   # traefik:
@@ -64,8 +58,6 @@ services:
     image: mailhog/mailhog
     container_name: mailhog
     restart: always
-    ports:
-      - "8025:8025"
     networks:
       - lecoursier
 
