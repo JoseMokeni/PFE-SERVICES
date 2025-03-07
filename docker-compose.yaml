@@ -11,10 +11,13 @@ services:
     networks:
       - default
       - lecoursier
-  adminer:
-    image: adminer
-    container_name: adminer
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
     restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@lecoursier.app
+      PGADMIN_DEFAULT_PASSWORD: admin
     networks:
       - default
       - lecoursier
@@ -23,11 +26,13 @@ services:
       - postgres
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adminer.rule=Host(`adminer.josemokeni.cloud`)"
-      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
-      - "traefik.http.routers.adminer.entrypoints=websecure"
-      - "traefik.http.routers.adminer.tls.certresolver=leresolver"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.josemokeni.cloud`)"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=8080"
+      - "traefik.http.routers.pgadmin.entrypoints=websecure"
+      - "traefik.http.routers.pgadmin.tls.certresolver=leresolver"
       - "traefik.docker.network=traefik-public"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
   redis:
     image: redis
     container_name: redis
@@ -80,6 +85,7 @@ services:
 
 volumes:
   pgdata:
+  pgadmin:
 
 networks:
   lecoursier:
