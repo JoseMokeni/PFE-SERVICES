@@ -39,6 +39,18 @@ services:
     restart: always
     networks:
       - lecoursier
+  soketi:
+    image: quay.io/soketi/soketi:1.4-16-debian
+    container_name: soketi
+    restart: unless-stopped
+    environment:
+      SOKETI_DEBUG: 1
+      SOKETI_DEFAULT_APP_ID: lecoursier
+      SOKETI_DEFAULT_APP_KEY: lecoursier
+      SOKETI_DEFAULT_APP_SECRET: lecoursier
+      SOKETI_DEFAULT_APP_TOKEN: lecoursier
+    networks:
+      - lecoursier
   # traefik:
   #   image: traefik
   #   container_name: traefik
