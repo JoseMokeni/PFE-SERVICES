@@ -49,8 +49,32 @@ services:
       SOKETI_DEFAULT_APP_KEY: lecoursier
       SOKETI_DEFAULT_APP_SECRET: lecoursier
       SOKETI_DEFAULT_APP_TOKEN: lecoursier
+    ports:
+      - 6001:6001
+      - 9601:9601
+
     networks:
       - lecoursier
+
+  # Redis commander
+  redis-commander:
+    image: rediscommander/redis-commander
+    container_name: redis-commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - REDIS_DATABASE=1
+    networks:
+      - lecoursier
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.redis-commander.rule=Host(`redis.josemokeni.cloud`)"
+      - "traefik.http.services.redis-commander.loadbalancer.server.port=8081"
+      - "traefik.http.routers.redis-commander.entrypoints=websecure"
+      - "traefik.http.routers.redis-commander.tls.certresolver=leresolver"
+      - "traefik.docker.network=traefik-public"
+
   # traefik:
   #   image: traefik
   #   container_name: traefik
