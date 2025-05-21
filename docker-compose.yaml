@@ -9,7 +9,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - default
       - lecoursier
   pgadmin:
     image: dpage/pgadmin4
@@ -19,7 +18,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@lecoursier.app
       PGADMIN_DEFAULT_PASSWORD: admin
     networks:
-      - default
       - lecoursier
       - traefik-public
     depends_on:
