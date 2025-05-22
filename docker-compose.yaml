@@ -22,6 +22,7 @@ services:
       - traefik-public
     depends_on:
       - postgres
+      - traefik
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.josemokeni.cloud`)"
@@ -49,8 +50,6 @@ services:
       SOKETI_DEFAULT_APP_TOKEN: lecoursier
     ports:
       - 6001:6001
-      - 9601:9601
-
     networks:
       - lecoursier
 
@@ -72,34 +71,23 @@ services:
       - "traefik.http.routers.redis-commander.entrypoints=websecure"
       - "traefik.http.routers.redis-commander.tls.certresolver=leresolver"
       - "traefik.docker.network=traefik-public"
+    depends_on:
+      - traefik
+      - redis
 
-  # traefik:
-  #   image: traefik
-  #   container_name: traefik
-  #   restart: always
-  #   command:
-  #     - --providers.docker=true
-  #     - --entrypoints.web.address=:80
-  #     - --entrypoints.websecure.address=:443
-  #     - --certificatesresolvers.leresolver.acme.httpchallenge=true
-  #     - --certificatesresolvers.leresolver.acme.email=jmmokeni@gmail.com
-  #     - --certificatesresolvers.leresolver.acme.storage=./docker/traefik/acme.json
-  #     - --certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./docker/traefik/acme.json:/acme.json
-  #     - ./docker/traefik/traefik.toml:/etc/traefik/traefik.toml
-  #   networks:
-  #     - lecoursier
-  #     - traefik-public
-  #   labels:
-  #     - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-  #     - "traefik.http.routers.http-catchall.entrypoints=web"
-  #     - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-  #     - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  traefik:
+    image: traefik
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker/traefik/acme.json:/acme.json
+      - ./docker/traefik/traefik.toml:/etc/traefik/traefik.toml
+    networks:
+      - traefik-public
 
   # Mail service
   mailhog:
@@ -116,6 +104,8 @@ services:
       - "traefik.http.routers.mailhog.entrypoints=websecure"
       - "traefik.http.routers.mailhog.tls.certresolver=leresolver"
       - "traefik.docker.network=traefik-public"
+    depends_on:
+      - traefik
 
 volumes:
   pgdata:

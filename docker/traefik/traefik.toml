@@ -17,3 +17,16 @@
       scheme = "https"
   [entryPoints.websecure]
     address = ":443"
+
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+    network = "traefik-public"
+
+[certificatesResolvers]
+  [certificatesResolvers.leresolver]
+    [certificatesResolvers.leresolver.acme]
+      email = "jmmokeni@gmail.com"
+      storage = "/acme.json"
+      [certificatesResolvers.leresolver.acme.httpChallenge]
+        entryPoint = "web"
