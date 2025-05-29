@@ -106,6 +106,22 @@ services:
       - "traefik.docker.network=traefik-public"
     depends_on:
       - traefik
+  
+  documentation:
+    image: josemokeni/lecoursier-documentation
+    container_name: lecoursier-documentation
+    restart: unless-stopped
+    networks:
+      - lecoursier
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.documentation.rule=Host(`docs.lecoursier.josemokeni.cloud`)"
+      - "traefik.http.services.documentation.loadbalancer.server.port=80"
+      - "traefik.http.routers.documentation.entrypoints=websecure"
+      - "traefik.http.routers.documentation.tls.certresolver=leresolver"
+      - "traefik.docker.network=traefik-public"
+    
 
 volumes:
   pgdata:
