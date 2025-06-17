@@ -10,6 +10,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - lecoursier
+  
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -32,12 +33,14 @@ services:
       - "traefik.docker.network=traefik-public"
     volumes:
       - pgadmin:/var/lib/pgadmin
+  
   redis:
     image: redis
     container_name: redis
     restart: always
     networks:
       - lecoursier
+  
   soketi:
     image: quay.io/soketi/soketi:1.4-16-debian
     container_name: soketi
@@ -49,9 +52,25 @@ services:
       SOKETI_DEFAULT_APP_SECRET: lecoursier
       SOKETI_DEFAULT_APP_TOKEN: lecoursier
     ports:
-      - 6001:6001
+      - "6001:6001"
     networks:
       - lecoursier
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      # Main WebSocket route
+      - "traefik.http.routers.soketi.rule=Host(`ws.josemokeni.cloud`)"
+      - "traefik.http.services.soketi.loadbalancer.server.port=6001"
+      - "traefik.http.routers.soketi.entrypoints=websecure"
+      - "traefik.http.routers.soketi.tls.certresolver=leresolver"
+      - "traefik.docker.network=traefik-public"
+      # Alternative route for compatibility
+      - "traefik.http.routers.soketi-alt.rule=Host(`josemokeni.cloud`) && PathPrefix(`/app/`)"
+      - "traefik.http.routers.soketi-alt.entrypoints=websecure"
+      - "traefik.http.routers.soketi-alt.tls.certresolver=leresolver"
+      - "traefik.http.routers.soketi-alt.service=soketi"
+    depends_on:
+      - traefik
 
   # Redis commander
   redis-commander:
@@ -121,7 +140,6 @@ services:
       - "traefik.http.routers.documentation.entrypoints=websecure"
       - "traefik.http.routers.documentation.tls.certresolver=leresolver"
       - "traefik.docker.network=traefik-public"
-    
 
 volumes:
   pgdata:
